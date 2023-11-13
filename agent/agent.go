@@ -11,30 +11,78 @@ import (
 	"time"
 )
 
-func Run() {
-	//quit <-chan struct{}, status chan *runtime.Status
+var args = agentArgs{}
+
+func init() {
+	args.quit = make(chan struct{}, 1)
 }
 
-func run(interval time.Duration, quit <-chan struct{}) {
-	tick := time.Tick(interval)
-	ts, stat := timeseries.Get[[]timeseries.EntryV1](nil, "")
-	if !stat.OK() {
-		fmt.Printf("error reading timseries data -> %v\n", stat)
-		return
+func Run() {
+	args.run()
+}
+
+func Stop() {
+	args.stop()
+}
+
+type agentArgs struct {
+	ts   []timeseries.EntryV2
+	slo  slo.EntryV1
+	quit chan struct{}
+}
+
+func (a agentArgs) run() {
+	go run(time.Second*5, a.quit, a)
+}
+
+func (a agentArgs) stop() {
+	a.quit <- struct{}{}
+	close(a.quit)
+}
+
+func (a agentArgs) getTimeseries() *runtime.Status {
+	//if len(a.ts) > 0 {
+	//	return runtime.NewStatusOK()
+	//}
+	var status *runtime.Status
+	a.ts, status = timeseries.Get[[]timeseries.EntryV2](nil, "")
+	if !status.OK() {
+		fmt.Printf("agent: error reading timseries data -> %v\n", status)
 	}
+	return status
+}
+
+func (a agentArgs) activeSLO() *runtime.Status {
+	//if len(a.slo.Threshold) > 0 {
+	//		return runtime.NewStatusOK()
+	//	}
+	entries, status := slo.Get[[]slo.EntryV1](nil, "")
+	if !status.OK() {
+		fmt.Printf("agent: error reading slo data -> %v\n", status)
+		return status
+	}
+	if len(entries) > 0 {
+		a.slo = entries[len(entries)-1]
+	}
+	return runtime.NewStatusOK()
+}
+
+func run(interval time.Duration, quit <-chan struct{}, a agentArgs) {
+	tick := time.Tick(interval)
+	var status *runtime.Status
 
 	for {
 		select {
 		case <-tick:
-			slo, status := activeSLO()
-			if !status.OK() {
-				fmt.Printf("error reading active SLO -> %v\n", status)
-			} else {
-				ms := durationMS(slo.Threshold)
-				for _, e := range ts {
-					if e.Duration > ms {
-						desc := fmt.Sprintf("duration [%v] is over threshold [%v]", e.Duration, ms)
-						addActivity("trace", "agent-name", slo.Controller, desc)
+			fmt.Printf("agent: tick\n")
+			status = a.getTimeseries()
+			if status.OK() {
+				status = a.activeSLO()
+				if status.OK() {
+					act := Analyze(a.ts, a.slo)
+					_, status = activity.Do(nil, "PUT", "", "", act)
+					if !status.OK() {
+						fmt.Printf("agent: error adding activity -> %v\n", status)
 					}
 				}
 			}
@@ -42,19 +90,11 @@ func run(interval time.Duration, quit <-chan struct{}) {
 		}
 		select {
 		case <-quit:
-			fmt.Printf("bye\n")
+			//fmt.Printf("bye\n")
 			return
 		default:
 		}
 	}
-}
-
-func activeSLO() (slo.EntryV1, *runtime.Status) {
-	entries, status := slo.Get[[]slo.EntryV1](nil, "")
-	if !status.OK() {
-		return slo.EntryV1{}, status
-	}
-	return entries[len(entries)-1], runtime.NewStatusOK()
 }
 
 func durationMS(threshold string) int {
@@ -70,15 +110,6 @@ func durationMS(threshold string) int {
 		return -1
 	}
 	return int(dur / time.Millisecond)
-}
-
-func addActivity(act, agent, controller, desc string) *runtime.Status {
-	e := activity.EntryV1{ActivityType: act, Agent: agent, Controller: controller, Description: desc}
-	var entries []activity.EntryV1
-
-	entries = append(entries, e)
-	_, status := activity.Do[[]activity.EntryV1](nil, "PUT", "", "", entries)
-	return status
 }
 
 func ParseDuration(s string) (time.Duration, error) {
@@ -121,15 +152,27 @@ func ParseDuration(s string) (time.Duration, error) {
 	return time.Duration(val) * time.Second, nil
 }
 
-func Example_Analyze(ts []timeseries.EntryV1) {
-	/*
-		ms := durationMS(slo.Threshold)
-		for _, e := range ts {
-			if e.Duration > ms {
-				desc := fmt.Sprintf("duration [%v] is over threshold [%v]", e.Duration, ms)
-				addActivity("trace", "agent-name", slo.Controller, desc)
-			}
-		}
+func Analyze(ts []timeseries.EntryV2, slo slo.EntryV1) []activity.EntryV1 {
+	var act []activity.EntryV1
 
-	*/
+	ms := durationMS(slo.Threshold)
+	for _, e := range ts {
+		if e.Duration > ms {
+			desc := fmt.Sprintf("duration [%v] is over threshold [%v]", e.Duration, ms)
+			act = append(act, activity.EntryV1{
+				CreatedTS:    time.Now().UTC(),
+				ActivityID:   "",
+				ActivityType: "trace",
+				Agent:        "agent-test",
+				AgentUri:     "",
+				Assignment:   "",
+				FrameUri:     "",
+				Controller:   "controller-test",
+				Behavior:     "",
+				Description:  desc,
+			})
+			//addActivity("trace", "agent-name", slo.Controller, desc)
+		}
+	}
+	return act
 }
