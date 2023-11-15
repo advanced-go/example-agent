@@ -1,13 +1,13 @@
-module github.com/go-ai-agent/example-agent
+module github.com/advanced-go/example-agent
 
-go 1.20
+go 1.21.4
 
 require (
-	github.com/go-ai-agent/core v0.0.0-20231112130636-3e0a27f71c39
-	github.com/go-ai-agent/example-domain v0.0.0-20231112152658-5f2012178e87
+	github.com/advanced-go/core v0.0.0-20231115175318-7cd120c33f6c
+	github.com/advanced-go/example-domain v0.0.0-20231115181735-c1e147637e88
 )
 
 require (
 	github.com/felixge/httpsnoop v1.0.4 // indirect
-	github.com/google/uuid v1.3.0 // indirect
+	github.com/google/uuid v1.4.0 // indirect
 )

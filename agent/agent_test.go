@@ -2,8 +2,8 @@ package agent
 
 import (
 	"fmt"
-	"github.com/go-ai-agent/example-domain/slo"
-	"github.com/go-ai-agent/example-domain/timeseries"
+	"github.com/advanced-go/example-domain/slo"
+	"github.com/advanced-go/example-domain/timeseries"
 	"time"
 )
 

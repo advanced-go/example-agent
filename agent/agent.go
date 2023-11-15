@@ -2,10 +2,10 @@ package agent
 
 import (
 	"fmt"
-	"github.com/go-ai-agent/core/runtime"
-	"github.com/go-ai-agent/example-domain/activity"
-	"github.com/go-ai-agent/example-domain/slo"
-	"github.com/go-ai-agent/example-domain/timeseries"
+	"github.com/advanced-go/core/runtime"
+	"github.com/advanced-go/example-domain/activity"
+	"github.com/advanced-go/example-domain/slo"
+	"github.com/advanced-go/example-domain/timeseries"
 	"strconv"
 	"strings"
 	"time"
@@ -45,7 +45,7 @@ func (a agentArgs) getTimeseries() *runtime.Status {
 	//	return runtime.NewStatusOK()
 	//}
 	var status *runtime.Status
-	a.ts, status = timeseries.Get[[]timeseries.EntryV2](nil, "")
+	a.ts, status = timeseries.GetEntry[[]timeseries.EntryV2](nil, "")
 	if !status.OK() {
 		fmt.Printf("agent: error reading timseries data -> %v\n", status)
 	}
@@ -56,7 +56,7 @@ func (a agentArgs) activeSLO() *runtime.Status {
 	//if len(a.slo.Threshold) > 0 {
 	//		return runtime.NewStatusOK()
 	//	}
-	entries, status := slo.Get[[]slo.EntryV1](nil, "")
+	entries, status := slo.GetEntry[[]slo.EntryV1](nil, "")
 	if !status.OK() {
 		fmt.Printf("agent: error reading slo data -> %v\n", status)
 		return status
@@ -80,7 +80,7 @@ func run(interval time.Duration, quit <-chan struct{}, a agentArgs) {
 				status = a.activeSLO()
 				if status.OK() {
 					act := Analyze(a.ts, a.slo)
-					_, status = activity.Do(nil, "PUT", "", "", act)
+					_, status = activity.PostEntry(nil, "PUT", "", "", act)
 					if !status.OK() {
 						fmt.Printf("agent: error adding activity -> %v\n", status)
 					}
@@ -160,13 +160,12 @@ func Analyze(ts []timeseries.EntryV2, slo slo.EntryV1) []activity.EntryV1 {
 		if e.Duration > ms {
 			desc := fmt.Sprintf("duration [%v] is over threshold [%v]", e.Duration, ms)
 			act = append(act, activity.EntryV1{
-				CreatedTS:    time.Now().UTC(),
+				//CreatedTS:    time.Now().UTC(),
 				ActivityID:   "",
 				ActivityType: "trace",
 				Agent:        "agent-test",
 				AgentUri:     "",
 				Assignment:   "",
-				FrameUri:     "",
 				Controller:   "controller-test",
 				Behavior:     "",
 				Description:  desc,
