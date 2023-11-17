@@ -2,6 +2,7 @@ package agent
 
 import (
 	"fmt"
+	"github.com/advanced-go/core/access"
 	"github.com/advanced-go/example-domain/slo"
 	"github.com/advanced-go/example-domain/timeseries"
 	"time"
@@ -42,8 +43,14 @@ func Example_durationMS() {
 	d := durationMS(s)
 	fmt.Printf("test: durationMS -> %v\n", d)
 
+	s = "99.9/1200ms"
+
+	d = durationMS(s)
+	fmt.Printf("test: durationMS -> %v\n", d)
+
 	//Output:
 	//test: durationMS -> 800
+	//test: durationMS -> 1200
 
 }
 
@@ -83,7 +90,8 @@ func Example_Analyze() {
 }
 
 func Example_Run() {
-	agent := agentArgs{
+	access.EnableDebugLogHandler()
+	agent := &agentArgs{
 		ts:   entries,
 		slo:  slo.EntryV1{Controller: "test-controller", Id: "123456", Threshold: "99.9/700ms"},
 		quit: make(chan struct{}, 1),
@@ -92,7 +100,7 @@ func Example_Run() {
 	time.Sleep(time.Millisecond * 1500)
 	agent.stop()
 
-	agent2 := agentArgs{
+	agent2 := &agentArgs{
 		ts:   entries,
 		slo:  slo.EntryV1{Controller: "test-controller", Id: "123456", Threshold: "99.9/900ms"},
 		quit: make(chan struct{}, 1),
@@ -101,7 +109,7 @@ func Example_Run() {
 	time.Sleep(time.Millisecond * 1500)
 	agent2.stop()
 
-	agent3 := agentArgs{
+	agent3 := &agentArgs{
 		ts:   entries,
 		slo:  slo.EntryV1{Controller: "test-controller", Id: "123456", Threshold: "99.9/1200ms"},
 		quit: make(chan struct{}, 1),
@@ -110,12 +118,12 @@ func Example_Run() {
 	time.Sleep(time.Millisecond * 1500)
 	agent3.stop()
 
-	fmt.Printf("\n")
+	time.Sleep(time.Millisecond * 1500)
+	//fmt.Printf("\n")
 
 	//Output:
 	//{ "activity": "trace" "agent": "agent-test"  "controller": "controller-test"  "message": "duration [800] is over threshold [700]"  }
 	//{ "activity": "trace" "agent": "agent-test"  "controller": "controller-test"  "message": "duration [1000] is over threshold [700]"  }
 	//{ "activity": "trace" "agent": "agent-test"  "controller": "controller-test"  "message": "duration [1000] is over threshold [900]"  }
-	//error adding activity -> Invalid Content
 
 }

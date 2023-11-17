@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-var args = agentArgs{}
+var args = new(agentArgs)
 
 func init() {
 	args.quit = make(chan struct{}, 1)
@@ -31,20 +31,20 @@ type agentArgs struct {
 	quit chan struct{}
 }
 
-func (a agentArgs) run() {
-	go run(time.Second*5, a.quit, a)
+func (a *agentArgs) run() {
+	go run(time.Second*1, a.quit, a)
 }
 
-func (a agentArgs) stop() {
+func (a *agentArgs) stop() {
 	a.quit <- struct{}{}
 	close(a.quit)
 }
 
-func (a agentArgs) getTimeseries() *runtime.Status {
-	//if len(a.ts) > 0 {
-	//	return runtime.NewStatusOK()
-	//}
-	var status *runtime.Status
+func (a *agentArgs) getTimeseries() runtime.Status {
+	if len(a.ts) > 0 {
+		return runtime.NewStatusOK()
+	}
+	var status runtime.Status
 	a.ts, status = timeseries.GetEntry[[]timeseries.EntryV2](nil, "")
 	if !status.OK() {
 		fmt.Printf("agent: error reading timseries data -> %v\n", status)
@@ -52,10 +52,10 @@ func (a agentArgs) getTimeseries() *runtime.Status {
 	return status
 }
 
-func (a agentArgs) activeSLO() *runtime.Status {
-	//if len(a.slo.Threshold) > 0 {
-	//		return runtime.NewStatusOK()
-	//	}
+func (a *agentArgs) activeSLO() runtime.Status {
+	if len(a.slo.Threshold) > 0 {
+		return runtime.NewStatusOK()
+	}
 	entries, status := slo.GetEntry[[]slo.EntryV1](nil, "")
 	if !status.OK() {
 		fmt.Printf("agent: error reading slo data -> %v\n", status)
@@ -67,9 +67,9 @@ func (a agentArgs) activeSLO() *runtime.Status {
 	return runtime.NewStatusOK()
 }
 
-func run(interval time.Duration, quit <-chan struct{}, a agentArgs) {
+func run(interval time.Duration, quit <-chan struct{}, a *agentArgs) {
 	tick := time.Tick(interval)
-	var status *runtime.Status
+	var status runtime.Status
 
 	for {
 		select {
@@ -80,9 +80,11 @@ func run(interval time.Duration, quit <-chan struct{}, a agentArgs) {
 				status = a.activeSLO()
 				if status.OK() {
 					act := Analyze(a.ts, a.slo)
-					_, status = activity.PostEntry(nil, "PUT", "", "", act)
-					if !status.OK() {
-						fmt.Printf("agent: error adding activity -> %v\n", status)
+					if len(act) > 0 {
+						_, status = activity.PostEntry[[]activity.EntryV1](nil, "PUT", "", activity.EntryV1Variant, act)
+						if !status.OK() {
+							fmt.Printf("agent: error adding activity -> %v\n", status)
+						}
 					}
 				}
 			}
@@ -90,7 +92,7 @@ func run(interval time.Duration, quit <-chan struct{}, a agentArgs) {
 		}
 		select {
 		case <-quit:
-			//fmt.Printf("bye\n")
+			fmt.Printf("bye\n")
 			return
 		default:
 		}
@@ -159,8 +161,8 @@ func Analyze(ts []timeseries.EntryV2, slo slo.EntryV1) []activity.EntryV1 {
 	for _, e := range ts {
 		if e.Duration > ms {
 			desc := fmt.Sprintf("duration [%v] is over threshold [%v]", e.Duration, ms)
+
 			act = append(act, activity.EntryV1{
-				//CreatedTS:    time.Now().UTC(),
 				ActivityID:   "",
 				ActivityType: "trace",
 				Agent:        "agent-test",
@@ -170,7 +172,6 @@ func Analyze(ts []timeseries.EntryV2, slo slo.EntryV1) []activity.EntryV1 {
 				Behavior:     "",
 				Description:  desc,
 			})
-			//addActivity("trace", "agent-name", slo.Controller, desc)
 		}
 	}
 	return act
