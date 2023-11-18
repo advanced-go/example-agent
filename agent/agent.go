@@ -17,8 +17,8 @@ func init() {
 	args.quit = make(chan struct{}, 1)
 }
 
-func Run() {
-	args.run()
+func Run(d time.Duration) {
+	args.run(d)
 }
 
 func Stop() {
@@ -31,8 +31,8 @@ type agentArgs struct {
 	quit chan struct{}
 }
 
-func (a *agentArgs) run() {
-	go run(time.Second*1, a.quit, a)
+func (a *agentArgs) run(d time.Duration) {
+	go run(d, a.quit, a)
 }
 
 func (a *agentArgs) stop() {
@@ -79,6 +79,7 @@ func run(interval time.Duration, quit <-chan struct{}, a *agentArgs) {
 			if status.OK() {
 				status = a.activeSLO()
 				if status.OK() {
+					fmt.Printf("processing slo : %v -> %v\n", a.slo.Id, a.slo.Threshold)
 					act := Analyze(a.ts, a.slo)
 					if len(act) > 0 {
 						_, status = activity.PostEntry[[]activity.EntryV1](nil, "PUT", "", activity.EntryV1Variant, act)

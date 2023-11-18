@@ -96,7 +96,7 @@ func Example_Run() {
 		slo:  slo.EntryV1{Controller: "test-controller", Id: "123456", Threshold: "99.9/700ms"},
 		quit: make(chan struct{}, 1),
 	}
-	agent.run()
+	agent.run(time.Millisecond * 100)
 	time.Sleep(time.Millisecond * 1500)
 	agent.stop()
 
@@ -105,7 +105,7 @@ func Example_Run() {
 		slo:  slo.EntryV1{Controller: "test-controller", Id: "123456", Threshold: "99.9/900ms"},
 		quit: make(chan struct{}, 1),
 	}
-	agent2.run()
+	agent2.run(time.Millisecond * 500)
 	time.Sleep(time.Millisecond * 1500)
 	agent2.stop()
 
@@ -114,7 +114,7 @@ func Example_Run() {
 		slo:  slo.EntryV1{Controller: "test-controller", Id: "123456", Threshold: "99.9/1200ms"},
 		quit: make(chan struct{}, 1),
 	}
-	agent3.run()
+	agent3.run(time.Millisecond * 1000)
 	time.Sleep(time.Millisecond * 1500)
 	agent3.stop()
 
