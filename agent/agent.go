@@ -78,22 +78,24 @@ func run(interval time.Duration, quit <-chan struct{}, a *agentArgs) {
 		case <-tick:
 			//fmt.Printf("agent: tick\n")
 			status = a.getTimeseries()
-			if status.OK() {
-				status = a.activeSLO()
-				if status.OK() {
-					if currentId == a.slo.Id {
-						fmt.Printf("processing skipped\n")
-						break
-					}
-					currentId = a.slo.Id
-					fmt.Printf("processing slo : %v -> %v\n", a.slo.Id, a.slo.Threshold)
-					act := Analyze(a.ts, a.slo)
-					if len(act) > 0 {
-						_, status = activity.PostEntry[[]activity.EntryV1](nil, "PUT", "", activity.EntryV1Variant, act)
-						if !status.OK() {
-							fmt.Printf("agent: error adding activity -> %v\n", status)
-						}
-					}
+			if !status.OK() {
+				break
+			}
+			status = a.activeSLO()
+			if !status.OK() {
+				break
+			}
+			if currentId == a.slo.Id {
+				fmt.Printf("processing skipped : no SLO changes\n")
+				break
+			}
+			currentId = a.slo.Id
+			fmt.Printf("processing slo : %v -> %v\n", a.slo.Id, a.slo.Threshold)
+			act := Analyze(a.ts, a.slo)
+			if len(act) > 0 {
+				_, status = activity.PostEntry[[]activity.EntryV1](nil, "PUT", "", activity.EntryV1Variant, act)
+				if !status.OK() {
+					fmt.Printf("agent: error adding activity -> %v\n", status)
 				}
 			}
 		default:
