@@ -71,6 +71,7 @@ func (a *agentArgs) activeSLO() runtime.Status {
 func run(interval time.Duration, quit <-chan struct{}, a *agentArgs) {
 	tick := time.Tick(interval)
 	var status runtime.Status
+	var currentId = ""
 
 	for {
 		select {
@@ -80,6 +81,11 @@ func run(interval time.Duration, quit <-chan struct{}, a *agentArgs) {
 			if status.OK() {
 				status = a.activeSLO()
 				if status.OK() {
+					if currentId == a.slo.Id {
+						fmt.Printf("processing skipped\n")
+						break
+					}
+					currentId = a.slo.Id
 					fmt.Printf("processing slo : %v -> %v\n", a.slo.Id, a.slo.Threshold)
 					act := Analyze(a.ts, a.slo)
 					if len(act) > 0 {
