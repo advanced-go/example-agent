@@ -26,6 +26,7 @@ func Stop() {
 }
 
 type agentArgs struct {
+	test bool
 	ts   []timeseries.EntryV2
 	slo  slo.EntryV1
 	quit chan struct{}
@@ -53,7 +54,7 @@ func (a *agentArgs) getTimeseries() runtime.Status {
 }
 
 func (a *agentArgs) activeSLO() runtime.Status {
-	if len(a.slo.Threshold) > 0 {
+	if a.test && len(a.slo.Threshold) > 0 {
 		return runtime.NewStatusOK()
 	}
 	entries, status := slo.GetEntry[[]slo.EntryV1](nil, "")
@@ -74,7 +75,7 @@ func run(interval time.Duration, quit <-chan struct{}, a *agentArgs) {
 	for {
 		select {
 		case <-tick:
-			fmt.Printf("agent: tick\n")
+			//fmt.Printf("agent: tick\n")
 			status = a.getTimeseries()
 			if status.OK() {
 				status = a.activeSLO()

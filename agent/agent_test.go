@@ -92,26 +92,29 @@ func Example_Analyze() {
 func Example_Run() {
 	access.EnableDebugLogHandler()
 	agent := &agentArgs{
+		test: true,
 		ts:   entries,
-		slo:  slo.EntryV1{Controller: "test-controller", Id: "123456", Threshold: "99.9/700ms"},
+		slo:  slo.EntryV1{Controller: "test-controller", Id: "1234", Threshold: "99.9/700ms"},
 		quit: make(chan struct{}, 1),
 	}
-	agent.run(time.Millisecond * 100)
+	agent.run(time.Millisecond * 500)
 	time.Sleep(time.Millisecond * 1500)
 	agent.stop()
 
 	agent2 := &agentArgs{
+		test: true,
 		ts:   entries,
-		slo:  slo.EntryV1{Controller: "test-controller", Id: "123456", Threshold: "99.9/900ms"},
+		slo:  slo.EntryV1{Controller: "test-controller", Id: "5678", Threshold: "99.9/900ms"},
 		quit: make(chan struct{}, 1),
 	}
-	agent2.run(time.Millisecond * 500)
+	agent2.run(time.Millisecond * 750)
 	time.Sleep(time.Millisecond * 1500)
 	agent2.stop()
 
 	agent3 := &agentArgs{
+		test: false,
 		ts:   entries,
-		slo:  slo.EntryV1{Controller: "test-controller", Id: "123456", Threshold: "99.9/1200ms"},
+		slo:  slo.EntryV1{Controller: "test-controller", Id: "9012", Threshold: "99.9/1200ms"},
 		quit: make(chan struct{}, 1),
 	}
 	agent3.run(time.Millisecond * 1000)
