@@ -5,7 +5,7 @@ import (
 	"github.com/advanced-go/core/runtime"
 	"github.com/advanced-go/example-domain/activity"
 	"github.com/advanced-go/example-domain/slo"
-	"github.com/advanced-go/example-domain/timeseries"
+	"github.com/advanced-go/example-domain/timeseries2"
 	"strconv"
 	"strings"
 	"time"
@@ -27,8 +27,8 @@ func Stop() {
 
 type agentArgs struct {
 	test bool
-	ts   []timeseries.EntryV2
-	slo  slo.EntryV1
+	ts   []timeseries2.Entry
+	slo  slo.Entry
 	quit chan struct{}
 }
 
@@ -46,7 +46,7 @@ func (a *agentArgs) getTimeseries() runtime.Status {
 		return runtime.NewStatusOK()
 	}
 	var status runtime.Status
-	a.ts, status = timeseries.GetEntry[[]timeseries.EntryV2](nil, "")
+	a.ts, status = timeseries2.GetEntry(nil, "")
 	if !status.OK() {
 		fmt.Printf("agent: error reading timseries data -> %v\n", status)
 	}
@@ -57,7 +57,7 @@ func (a *agentArgs) activeSLO() runtime.Status {
 	if a.test && len(a.slo.Threshold) > 0 {
 		return runtime.NewStatusOK()
 	}
-	entries, status := slo.GetEntry[[]slo.EntryV1](nil, "")
+	entries, status := slo.GetEntry(nil, "")
 	if !status.OK() {
 		fmt.Printf("agent: error reading slo data -> %v\n", status)
 		return status
@@ -93,7 +93,7 @@ func run(interval time.Duration, quit <-chan struct{}, a *agentArgs) {
 			fmt.Printf("processing slo : %v -> %v\n", a.slo.Id, a.slo.Threshold)
 			act := Analyze(a.ts, a.slo)
 			if len(act) > 0 {
-				_, status = activity.PostEntry[[]activity.EntryV1](nil, "PUT", "", activity.EntryV1Variant, act)
+				_, status = activity.PostEntry[[]activity.Entry](nil, "PUT", "", act)
 				if !status.OK() {
 					fmt.Printf("agent: error adding activity -> %v\n", status)
 				}
@@ -164,15 +164,15 @@ func ParseDuration(s string) (time.Duration, error) {
 	return time.Duration(val) * time.Second, nil
 }
 
-func Analyze(ts []timeseries.EntryV2, slo slo.EntryV1) []activity.EntryV1 {
-	var act []activity.EntryV1
+func Analyze(ts []timeseries2.Entry, slo slo.Entry) []activity.Entry {
+	var act []activity.Entry
 
 	ms := durationMS(slo.Threshold)
 	for _, e := range ts {
 		if e.Duration > ms {
 			desc := fmt.Sprintf("duration [%v] is over threshold [%v]", e.Duration, ms)
 
-			act = append(act, activity.EntryV1{
+			act = append(act, activity.Entry{
 				ActivityID:   "",
 				ActivityType: "trace",
 				Agent:        "agent-test",
