@@ -5,7 +5,8 @@ import (
 	"github.com/advanced-go/core/runtime"
 	"github.com/advanced-go/example-domain/activity"
 	"github.com/advanced-go/example-domain/slo"
-	"github.com/advanced-go/example-domain/timeseries2"
+	"github.com/advanced-go/example-domain/timeseries"
+	"github.com/advanced-go/example-domain/timeseries/entryv2"
 	"strconv"
 	"strings"
 	"time"
@@ -27,7 +28,7 @@ func Stop() {
 
 type agentArgs struct {
 	test bool
-	ts   []timeseries2.Entry
+	ts   []entryv2.Entry
 	slo  slo.Entry
 	quit chan struct{}
 }
@@ -46,7 +47,7 @@ func (a *agentArgs) getTimeseries() runtime.Status {
 		return runtime.NewStatusOK()
 	}
 	var status runtime.Status
-	a.ts, status = timeseries2.GetEntry(nil, "")
+	a.ts, status = timeseries.GetEntryV2(nil, "")
 	if !status.OK() {
 		fmt.Printf("agent: error reading timseries data -> %v\n", status)
 	}
@@ -164,7 +165,7 @@ func ParseDuration(s string) (time.Duration, error) {
 	return time.Duration(val) * time.Second, nil
 }
 
-func Analyze(ts []timeseries2.Entry, slo slo.Entry) []activity.Entry {
+func Analyze(ts []entryv2.Entry, slo slo.Entry) []activity.Entry {
 	var act []activity.Entry
 
 	ms := durationMS(slo.Threshold)

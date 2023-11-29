@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"github.com/advanced-go/core/access"
 	"github.com/advanced-go/example-domain/slo"
-	"github.com/advanced-go/example-domain/timeseries2"
+	"github.com/advanced-go/example-domain/timeseries/entryv2"
 	"time"
 )
 
-var entries = []timeseries2.Entry{
+var entries = []entryv2.Entry{
 	{
 		Traffic:        "ingress",
 		Duration:       800,
@@ -90,7 +90,7 @@ func Example_Analyze() {
 }
 
 func Example_Run() {
-	access.EnableDebugLogHandler()
+	access.EnableTestLogHandler()
 	agent := &agentArgs{
 		test: true,
 		ts:   entries,
