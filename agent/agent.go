@@ -5,8 +5,8 @@ import (
 	"github.com/advanced-go/core/runtime"
 	"github.com/advanced-go/example-domain/activity"
 	"github.com/advanced-go/example-domain/slo"
-	"github.com/advanced-go/example-domain/timeseries"
 	"github.com/advanced-go/example-domain/timeseries/entryv2"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -46,8 +46,8 @@ func (a *agentArgs) getTimeseries() runtime.Status {
 	if len(a.ts) > 0 {
 		return runtime.NewStatusOK()
 	}
-	var status runtime.Status
-	a.ts, status = timeseries.GetEntryV2(nil, "")
+	status := runtime.NewStatus(http.StatusInternalServerError)
+	//a.ts, status = timeseries.GetEntryV2(nil, "")
 	if !status.OK() {
 		fmt.Printf("agent: error reading timseries data -> %v\n", status)
 	}
