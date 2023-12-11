@@ -3,8 +3,8 @@ module github.com/advanced-go/example-agent
 go 1.21.4
 
 require (
-	github.com/advanced-go/core v0.0.0-20231204170332-5286012c385e
-	github.com/advanced-go/example-domain v0.0.0-20231204185622-9e68ea91625b
+	github.com/advanced-go/core v0.0.0-20231211223727-e918985bcfd7
+	github.com/advanced-go/example-domain v0.0.0-20231211231350-cb66e07d9c5b
 )
 
 require (
