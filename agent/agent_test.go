@@ -90,7 +90,7 @@ func Example_Analyze() {
 }
 
 func Example_Run() {
-	access.EnableTestLogHandler()
+	access.EnableTestLogger()
 	agent := &agentArgs{
 		test: true,
 		ts:   entries,

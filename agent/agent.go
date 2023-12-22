@@ -48,7 +48,7 @@ func (a *agentArgs) getTimeseries() runtime.Status {
 		return runtime.NewStatusOK()
 	}
 	status := runtime.NewStatus(http.StatusInternalServerError)
-	a.ts, status = timeseries.GetEntryV2(nil, "")
+	a.ts, status = timeseries.GetEntryV2(nil, nil)
 	if !status.OK() {
 		fmt.Printf("agent: error reading timseries data -> %v\n", status)
 	}
@@ -59,7 +59,7 @@ func (a *agentArgs) activeSLO() runtime.Status {
 	if a.test && len(a.slo.Threshold) > 0 {
 		return runtime.NewStatusOK()
 	}
-	entries, status := slo.GetEntry(nil, "")
+	entries, status := slo.GetEntry(nil, nil)
 	if !status.OK() {
 		fmt.Printf("agent: error reading slo data -> %v\n", status)
 		return status
@@ -95,7 +95,7 @@ func run(interval time.Duration, quit <-chan struct{}, a *agentArgs) {
 			fmt.Printf("processing slo : %v -> %v\n", a.slo.Id, a.slo.Threshold)
 			act := Analyze(a.ts, a.slo)
 			if len(act) > 0 {
-				_, status = activity.PostEntry[[]activity.Entry](nil, "PUT", "", act)
+				_, status = activity.PostEntry[[]activity.Entry](nil, "PUT", nil, act)
 				if !status.OK() {
 					fmt.Printf("agent: error adding activity -> %v\n", status)
 				}
