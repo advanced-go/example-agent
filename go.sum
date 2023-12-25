@@ -8,6 +8,8 @@ github.com/advanced-go/example-domain v0.0.0-20231221175414-55ed792ef704 h1:7+jx
 github.com/advanced-go/example-domain v0.0.0-20231221175414-55ed792ef704/go.mod h1:B9vVaeBnHR1IRS6+zduBtm7E+o0KgdDfpE+EryzJphM=
 github.com/advanced-go/example-domain v0.0.0-20231222184851-e3d0ebb327f1 h1:qOHmMD2CZtm8hxewpQY6bGbMryALBzZmv2u0bm9Y+RY=
 github.com/advanced-go/example-domain v0.0.0-20231222184851-e3d0ebb327f1/go.mod h1:zp4ufoObtcxns0wNcoGs2iZ9VMcjxZvmTi8l9kCccKI=
+github.com/advanced-go/example-domain v0.0.0-20231225150543-da806775599b h1:O5x7RHKKrx6s5mKZbyi9YUEGaCcJxEVHDTibP6vPAMU=
+github.com/advanced-go/example-domain v0.0.0-20231225150543-da806775599b/go.mod h1:4KmX94fT1KlVvL8DyQRQM4jc5U7CczD0gemO8EI8H7k=
 github.com/advanced-go/messaging v0.0.0-20231220192105-86c5cce95dc0 h1:AYEOLQoMsCpT/HTcJhpcetvpglDmJ+MCe1HCcXr0kC0=
 github.com/advanced-go/messaging v0.0.0-20231220192105-86c5cce95dc0/go.mod h1:DonmYg8URk088g4ta+5bWRXT0x+h8RrVob+bnuvslFo=
 github.com/advanced-go/messaging v0.0.0-20231222134422-12fcae1d1226/go.mod h1:cfB21rhO/6WgWJOH9RV+PRF2Xlxa5tHfaLtbDJG2TV0=
@@ -17,5 +19,6 @@ github.com/advanced-go/messaging v0.0.0-20231225133917-831e9774238e h1:wn2A8QDpC
 github.com/advanced-go/messaging v0.0.0-20231225133917-831e9774238e/go.mod h1:UApViZpTpYSJn+tF5J3FzBg5GFb3/eske4Nn+aZvTAI=
 github.com/advanced-go/postgresql v0.0.0-20231222185054-3047ff736169 h1:xHWFc0E2B+u/W7uxkjZZ9VfzpcyjgwzsJyOBDJlqD5s=
 github.com/advanced-go/postgresql v0.0.0-20231222185054-3047ff736169/go.mod h1:/H8O8vHwJ9lG8GgNvzFssvOnCN3kXE5w9Pz7QmxpeNU=
+github.com/advanced-go/postgresql v0.0.0-20231225144613-c264d565b4cf/go.mod h1:Ps+HkVRDNiRRp+zP15sg5hOX5e9coXxOp8e7IjMkqUc=
 github.com/google/uuid v1.4.0 h1:MtMxsa51/r9yyhkyLsVeVt0B+BGQZzpQiTQ4eHZ8bc4=
 github.com/google/uuid v1.4.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
