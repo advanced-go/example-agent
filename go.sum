@@ -1,10 +1,6 @@
-github.com/advanced-go/core v0.0.0-20231222200601-673d05ff557f h1:Frv5dJ8JRxTMA/h9OywZI1oXLhRuKE1NHadE5GUghcc=
-github.com/advanced-go/core v0.0.0-20231222200601-673d05ff557f/go.mod h1:p58Ll2RUpEOeraoKxazyJpiPkWZelINYxxkcwCtwjUE=
-github.com/advanced-go/example-domain v0.0.0-20231226114601-97d687d345a1 h1:asfxDk+8Kamnd8x1B6G0KyKBsOVK0UK8pWm53pcVeHY=
-github.com/advanced-go/example-domain v0.0.0-20231226114601-97d687d345a1/go.mod h1:LQBkpZ9W4tZ1XjzcYNFIARGVnLTSFBW3OMZpyAeUBk4=
-github.com/advanced-go/example-domain v0.0.0-20231227194558-6e3e9ce484d7 h1:ATcoNsuS3BZubViBFmtm7FoxwTCdSpZPCNLffLDht8Q=
-github.com/advanced-go/example-domain v0.0.0-20231227194558-6e3e9ce484d7/go.mod h1:xqG/j7noKmmWeH2xKD+XVDzyCl96TmHdTuTbD6IesUM=
-github.com/advanced-go/messaging v0.0.0-20231227153933-11b8f486a9f4 h1:vonWISswW2CdL/nJ7kbHymIPwCv2p2WuNmPHkW5g3Ss=
-github.com/advanced-go/messaging v0.0.0-20231227153933-11b8f486a9f4/go.mod h1:UApViZpTpYSJn+tF5J3FzBg5GFb3/eske4Nn+aZvTAI=
+github.com/advanced-go/core v0.0.0-20231230171253-7a138ae54e06 h1:RDQL1jwNNKJke+xe2mzSH9GZsf/SxGi/7XvhqZnxsoU=
+github.com/advanced-go/core v0.0.0-20231230171253-7a138ae54e06/go.mod h1:p58Ll2RUpEOeraoKxazyJpiPkWZelINYxxkcwCtwjUE=
+github.com/advanced-go/example-domain v0.0.0-20231230191345-3ea2ff26e2df h1:9tPTXQ8fr9VlsecevbkJiFhgWlW7Pg79FTRN1y6Z7wE=
+github.com/advanced-go/example-domain v0.0.0-20231230191345-3ea2ff26e2df/go.mod h1:N4E3fZpkHp8rJCcIL60eP3c56bff+ZWUtlB16h2FCJw=
 github.com/google/uuid v1.4.0 h1:MtMxsa51/r9yyhkyLsVeVt0B+BGQZzpQiTQ4eHZ8bc4=
 github.com/google/uuid v1.4.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
