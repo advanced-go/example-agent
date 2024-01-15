@@ -55,7 +55,7 @@ func Example_durationMS() {
 }
 
 func Example_Analyze() {
-	act := Analyze(entries, slo.Entry{Threshold: "99.9/600ms"})
+	act := Analyze(entries, slo.EntryV1{Threshold: "99.9/600ms"})
 	if len(act) > 0 {
 		for _, a := range act {
 			fmt.Printf("test: Analyze() -> %v\n", a.Description)
@@ -64,7 +64,7 @@ func Example_Analyze() {
 		fmt.Printf("test: Analyze() -> %v\n", act)
 	}
 
-	act = Analyze(entries, slo.Entry{Threshold: "99.9/1200ms"})
+	act = Analyze(entries, slo.EntryV1{Threshold: "99.9/1200ms"})
 	if len(act) > 0 {
 		for _, a := range act {
 			fmt.Printf("test: Analyze() -> %v\n", a.Description)
@@ -73,7 +73,7 @@ func Example_Analyze() {
 		fmt.Printf("test: Analyze() -> %v\n", act)
 	}
 
-	act = Analyze(entries, slo.Entry{Threshold: "99.9/801ms"})
+	act = Analyze(entries, slo.EntryV1{Threshold: "99.9/801ms"})
 	if len(act) > 0 {
 		for _, a := range act {
 			fmt.Printf("test: Analyze() -> %v\n", a.Description)
@@ -94,7 +94,7 @@ func Example_Run() {
 	agent := &agentArgs{
 		test: true,
 		ts:   entries,
-		slo:  slo.Entry{Controller: "test-controller", Id: "1234", Threshold: "99.9/700ms"},
+		slo:  slo.EntryV1{Controller: "test-controller", Id: "1234", Threshold: "99.9/700ms"},
 		quit: make(chan struct{}, 1),
 	}
 	agent.run(time.Millisecond * 500)
@@ -104,7 +104,7 @@ func Example_Run() {
 	agent2 := &agentArgs{
 		test: true,
 		ts:   entries,
-		slo:  slo.Entry{Controller: "test-controller", Id: "5678", Threshold: "99.9/900ms"},
+		slo:  slo.EntryV1{Controller: "test-controller", Id: "5678", Threshold: "99.9/900ms"},
 		quit: make(chan struct{}, 1),
 	}
 	agent2.run(time.Millisecond * 750)
@@ -114,7 +114,7 @@ func Example_Run() {
 	agent3 := &agentArgs{
 		test: false,
 		ts:   entries,
-		slo:  slo.Entry{Controller: "test-controller", Id: "9012", Threshold: "99.9/1200ms"},
+		slo:  slo.EntryV1{Controller: "test-controller", Id: "9012", Threshold: "99.9/1200ms"},
 		quit: make(chan struct{}, 1),
 	}
 	agent3.run(time.Millisecond * 1000)
