@@ -50,7 +50,7 @@ func (a *agentArgs) getTimeseries() runtime.Status {
 	status := runtime.NewStatus(http.StatusInternalServerError)
 	a.ts, status = timeseries.GetEntryV2(nil, nil)
 	if !status.OK() {
-		fmt.Printf("agent: error reading timseries data -> %v\n", status)
+		fmt.Printf("agent: error reading timeseries data -> %v\n", status)
 	}
 	return status
 }
