@@ -43,9 +43,9 @@ func (a *agentArgs) stop() {
 	close(a.quit)
 }
 
-func (a *agentArgs) getTimeseries() runtime.Status {
+func (a *agentArgs) getTimeseries() *runtime.Status {
 	if len(a.ts) > 0 {
-		return runtime.NewStatusOK()
+		return runtime.StatusOK()
 	}
 	status := runtime.NewStatus(http.StatusInternalServerError)
 	a.ts, status = timeseries.GetEntryV2(nil, nil)
@@ -55,9 +55,9 @@ func (a *agentArgs) getTimeseries() runtime.Status {
 	return status
 }
 
-func (a *agentArgs) activeSLO() runtime.Status {
+func (a *agentArgs) activeSLO() *runtime.Status {
 	if a.test && len(a.slo.Threshold) > 0 {
-		return runtime.NewStatusOK()
+		return runtime.StatusOK()
 	}
 	entries, status := slo.GetEntry(nil, nil)
 	if !status.OK() {
@@ -67,12 +67,12 @@ func (a *agentArgs) activeSLO() runtime.Status {
 	if len(entries) > 0 {
 		a.slo = entries[len(entries)-1]
 	}
-	return runtime.NewStatusOK()
+	return runtime.StatusOK()
 }
 
 func run(interval time.Duration, quit <-chan struct{}, a *agentArgs) {
 	tick := time.Tick(interval)
-	var status runtime.Status
+	var status *runtime.Status
 	var currentId = ""
 
 	for {
